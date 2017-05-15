@@ -1,0 +1,5 @@
+[merriam-webster]
+api_key = bunch-of-random-characters
+[oxford]
+app_id = 1234567890
+app_key = more-random-characters

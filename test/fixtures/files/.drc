@@ -1,0 +1,7 @@
+[merriam-webster]
+api_key = your-key-here
+
+[oxford]
+app_id = your-oxford-appid
+app_key = your-oxford-app_key
+
