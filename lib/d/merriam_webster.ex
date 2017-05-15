@@ -27,7 +27,7 @@ defmodule D.MerriamWebster do
     body
     |> xpath(
       ~x{//entry_list/entry}l, 
-      description: ~x{./fl/text()},
+      lexical_type: ~x{./fl/text()},
       definition: ~x{./def/dt/text()}l
     )
   end
