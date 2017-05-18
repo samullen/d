@@ -36,10 +36,8 @@ defmodule D.CLI do
     |> Enum.map(fn {task, result} -> 
          result || Task.shutdown(task, :brutal_kill) 
        end)
-
-    for {:ok, value} <- results do
-      Enum.each(value, fn item -> IO.puts format_item(item) end)
-    end
+    |> Enum.flat_map(fn {:ok, value} -> value; _ -> [] end)
+    |> Enum.each(fn item -> IO.puts format_item(item) end)
   end
 
   def format_item(item) do
