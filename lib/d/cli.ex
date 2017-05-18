@@ -30,12 +30,20 @@ defmodule D.CLI do
   end
 
   def process({term, config}) do
-    IO.puts "define #{term}"
-    IO.puts "define #{inspect config}"
-    # case File.read(filepath) do
-    #   {:ok, data} -> IO.write data
-    #   {:error, error} -> IO.puts "Error: #{:file.format_error(error)}"
-    # end
+    results = [&D.Oxford.fetch/1,&D.MerriamWebster.fetch/1]
+    |> Enum.map(&(Task.async(fn -> &1.(term) end)))
+    |> Task.yield_many(5000)
+    |> Enum.map(fn {task, result} -> 
+         result || Task.shutdown(task, :brutal_kill) 
+       end)
+
+    for {:ok, value} <- results do
+      Enum.each(value, fn item -> IO.puts format_item(item) end)
+    end
+  end
+
+  def format_item(item) do
+    "Type: #{item.lexical_type}\nDefinition: #{item.definition}\n\n"
   end
 
   defp do_parse_config(path, true) do
