@@ -11,9 +11,9 @@ defmodule D.CLI do
       """
   end
 
-  def process({term, config}) do
-    results = [&D.Oxford.fetch/1,&D.MerriamWebster.fetch/1]
-    |> Enum.map(&(Task.async(fn -> &1.(term) end)))
+  def process(config) do
+    results = [&D.Dictionary.fetch/1] #,&D.MerriamWebster.fetch/1]
+    |> Enum.map(&(Task.async(fn -> &1.(config) end)))
     |> Task.yield_many(5000)
     |> Enum.map(fn {task, result} -> 
          result || Task.shutdown(task, :brutal_kill) 

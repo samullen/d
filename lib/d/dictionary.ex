@@ -1,18 +1,17 @@
-defmodule D.MerriamWebster do
+defmodule D.Dictionary do
   import SweetXml
 
-  @user_agent [{"User-Agent", "Elixir samuel@pixelatedworks.com"}]
-  @api_key "81aae390-fc77-47a9-b990-d151db3ef918"
+  @user_agent [{"User-Agent", "Elixir samuel@samuelmullen.com"}]
 
-  def fetch(term) do
-    endpoint(term)
+  def fetch(config) do
+    endpoint(config)
     |> HTTPoison.get(@user_agent)
     |> handle_response
     |> format_response
   end
 
-  def endpoint(term) do
-    "http://www.dictionaryapi.com/api/v1/references/collegiate/xml/#{term}?key=#{@api_key}"
+  def endpoint(config) do
+    "http://www.dictionaryapi.com/api/v1/references/collegiate/xml/#{config["term"]}?key=#{config["dictionary_api_key"]}"
   end
 
   def handle_response({:ok, %{body: body, status_code: 200}}) do
