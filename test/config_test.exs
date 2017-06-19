@@ -13,7 +13,7 @@ defmodule ConfigTest do
     end
 
     test "term and config returned when args provided" do
-      assert parse_args(~w{example}) == %{term: "example"}
+      assert parse_args(~w{example}) == %{"term" => "example"}
     end
   end
 
@@ -23,15 +23,15 @@ defmodule ConfigTest do
     end
 
     test "passing term returns %{term: term, config}" do
-      default_config = %{"config" => %{"dictionary_api_key" => "your-key-here", "thesaurus_api_key" => "your-key-here"}}
-      assert parse_config(%{term: "example"}) == Map.merge(%{term: "example"}, default_config)
+      default_config = %{"dictionary_api_key" => "your-key-here", "thesaurus_api_key" => "your-key-here"}
+      assert parse_config(%{"term" => "example"}) == Map.merge(%{"term" => "example"}, default_config)
     end
 
     test "it creates a .drc file in the configured drc path if nonexistent" do
       drc_path = Path.expand(Application.get_env(:d, :drc_path))
       File.rename(drc_path, "#{Path.dirname(drc_path)}/.drc_bak")
 
-      parse_config(%{term: "example"})
+      parse_config(%{"term" => "example"})
       assert File.exists?(drc_path) == true
 
       File.rename("#{Path.dirname(drc_path)}/.drc_bak", drc_path)
@@ -46,7 +46,7 @@ defmodule ConfigTest do
         thesaurus_api_key = your-key-here
         """
 
-      parse_config(%{term: "example"})
+      parse_config(%{"term" => "example"})
       assert File.read(drc_path) == {:ok, default_config}
 
       File.rename("#{Path.dirname(drc_path)}/.drc_bak", drc_path)

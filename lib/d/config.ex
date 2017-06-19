@@ -12,7 +12,7 @@ defmodule D.Config do
                                        aliases:  [h: :help])
     case options do
       {[help: true], _, _} -> :help
-      {_, [term], _}       -> %{term: term}
+      {_, [term], _}       -> %{"term" => term}
       _                    -> :help
     end
   end
@@ -24,7 +24,7 @@ defmodule D.Config do
 
   defp do_parse_config(true) do
     {:ok, results} = ConfigParser.parse_file(@drc_path)
-    results
+    results["config"]
   end
   defp do_parse_config(false) do
     content = """
