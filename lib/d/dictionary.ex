@@ -7,7 +7,7 @@ defmodule D.Dictionary do
     endpoint(config)
     |> HTTPoison.get(@user_agent)
     |> handle_response
-    |> format_response
+    |> format_response(config)
   end
 
   def endpoint(config) do
@@ -21,11 +21,11 @@ defmodule D.Dictionary do
     {:error, reason}
   end
 
-  def format_response({:error, reason}), do: {:error, reason}
-  def format_response({:ok, body}) do
+  def format_response({:error, reason}, config), do: {:error, reason}
+  def format_response({:ok, body}, config) do
     body
     |> xpath(
-      ~x{//entry_list/entry}l, 
+      ~x{//entry_list/entry[starts-with(@id, "#{config["term"]}[")]}l,
       lexical_type: ~x{./fl/text()},
       definition: ~x{./def/dt/text()}l
     )
