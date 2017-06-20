@@ -12,7 +12,7 @@ defmodule D.CLI do
   end
 
   def process(config) do
-    results = [&D.Dictionary.fetch/1] #,&D.MerriamWebster.fetch/1]
+    results = [&D.Dictionary.fetch/1,&D.Thesaurus.fetch/1]
     |> Enum.map(&(Task.async(fn -> &1.(config) end)))
     |> Task.yield_many(5000)
     |> Enum.map(fn {task, result} -> 
@@ -22,7 +22,22 @@ defmodule D.CLI do
     |> Enum.each(fn item -> IO.puts format_item(item) end)
   end
 
-  def format_item(item) do
-    "Type: #{item.lexical_type}\nDefinition: #{item.definition}\n\n"
+  def format_item(%{lexical_type: lexical_type, definition: definitions}) do
+    """
+    Type: #{lexical_type}
+    Definition(s): 
+      #{Enum.join(definitions, "\n  ")}
+    """
+  end
+  def format_item(%{lexical_type: lexical_type, senses: senses}) do
+    Enum.map(senses, fn(sense) ->
+      """
+      #{lexical_type}: #{sense.sense}
+        Synonyms: #{sense.synonyms}
+        Antonyms: #{sense.antonyms}
+      """
+    end)
+    |> Enum.join("\n")
+
   end
 end
